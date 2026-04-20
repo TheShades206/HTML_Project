@@ -7,68 +7,98 @@ import dto.StudentRequestDTO;
 import java.util.Scanner;
 import utils.Validation;
 
-// Lop main dung de chay chuong trinh
 public class Main {
 
     public static void main(String[] args) {
-        // Tao scanner de nhap du lieu
         Scanner sc = new Scanner(System.in);
-        // Tao controller
         StudentController controller = new StudentController();
-        // Vong lap menu chinh
+
         while (true) {
-            // Hien thi menu
             System.out.println(Message.MENU);
-            // Yeu cau nhap lua chon
-            System.out.print(Message.INPUT_CHOICE);
+            int choice;
+
+            // --- Nhập lựa chọn Menu ---
+            while (true) {
+                System.out.print(Message.INPUT_CHOICE);
+                try {
+                    choice = Validation.getChoice(sc.nextLine(), 1, 5);
+                    break;
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+
             try {
-                // Validate lua chon tu 1 den 5
-                int choice = Validation.getChoice(sc.nextLine(), 1, 5);
                 switch (choice) {
                     // ================= CREATE =================
                     case 1:
                         while (true) {
-                            // Tao DTO moi
                             StudentRequestDTO dto = new StudentRequestDTO();
-                            // Nhap ID
-                            System.out.print(Message.INPUT_ID);
-                            dto.setId(Validation.getString(sc.nextLine()));
-                            // Nhap ten
-                            System.out.print(Message.INPUT_NAME);
-                            dto.setName(Validation.getString(sc.nextLine()));
-                            // Nhap semester
-                            System.out.print(Message.INPUT_SEMESTER);
-                            dto.setSemester(Validation.getString(sc.nextLine()));
                             CourseType course;
 
+                            // Nhập ID
+                            while (true) {
+                                System.out.print(Message.INPUT_ID);
+                                try {
+                                    dto.setId(Validation.getString(sc.nextLine()));
+                                    break;
+                                } catch (Exception e) {
+                                    System.out.println(e.getMessage());
+                                }
+                            }
+
+                            // Nhập Name
+                            while (true) {
+                                System.out.print(Message.INPUT_NAME);
+                                try {
+                                    dto.setName(Validation.getString(sc.nextLine()));
+                                    break;
+                                } catch (Exception e) {
+                                    System.out.println(e.getMessage());
+                                }
+                            }
+
+                            // Nhập Semester
+                            while (true) {
+                                System.out.print(Message.INPUT_SEMESTER);
+                                try {
+                                    dto.setSemester(Validation.getString(sc.nextLine()));
+                                    break;
+                                } catch (Exception e) {
+                                    System.out.println(e.getMessage());
+                                }
+                            }
+
+                            // Nhập Course
                             while (true) {
                                 System.out.print(Message.INPUT_COURSE);
-
                                 try {
                                     course = Validation.validateCourse(sc.nextLine());
-
-                                    // hop le thi thoat
-                                    if (course != null) {
-                                        break;
-                                    }
-
+                                    break;
                                 } catch (Exception e) {
-                                    // neu ham validateCourse throw loi
-                                    System.out.println(Message.INVALID_COURSE);
-                                    continue;
+                                    System.out.println(e.getMessage());
                                 }
-
-                                // truong hop khong throw nhưng tra ve null
-                                System.out.println(Message.INVALID_COURSE);
                             }
                             dto.setCourse(course);
-                            // Goi controller tao sinh vien
-                            controller.createStudent(dto);
-                            // Neu da co it nhat 10 sinh vien thi hoi tiep tuc
+
+                            try {
+                                controller.createStudent(dto);
+                            } catch (Exception e) {
+                                System.out.println(e.getMessage());
+                            }
+
+                            // Kiểm tra số lượng để hỏi Yes/No
                             if (!controller.isDatabaseLessThanTen()) {
-                                System.out.print(Message.CONTINUE_CREATE);
-                                String answer = Validation.validateYesNo(sc.nextLine());
-                                // Neu chon N thi quay ve menu
+                                String answer;
+                                while (true) {
+                                    System.out.print(Message.CONTINUE_CREATE);
+                                    try {
+                                        answer = Validation.validateYesNo(sc.nextLine());
+                                        break;
+                                    } catch (Exception e) {
+                                        System.out.println(e.getMessage());
+                                    }
+                                }
                                 if (answer.equals("N")) {
                                     break;
                                 }
@@ -79,55 +109,83 @@ public class Main {
                     // ================= FIND AND SORT =================
                     case 2:
                         System.out.print(Message.INPUT_SEARCH_NAME);
-                        String keyword = Validation.getString(sc.nextLine());
-                        controller.findAndSort(keyword);
+                        controller.findAndSort(Validation.getString(sc.nextLine()));
                         break;
+
                     // ================= UPDATE / DELETE =================
                     case 3:
-                        System.out.print(Message.INPUT_ID);
-                        String id = Validation.getString(sc.nextLine());
-                        System.out.print(Message.UPDATE_OR_DELETE);
-                        String action = Validation.validateUpdateDelete(sc.nextLine());
-                        // Neu chon update
+                        String id;
+                        while (true) {
+                            System.out.print(Message.INPUT_ID);
+                            try {
+                                id = Validation.getString(sc.nextLine());
+                                break;
+                            } catch (Exception e) {
+                                System.out.println(e.getMessage());
+                            }
+                        }
+
+                        String action;
+                        while (true) {
+                            System.out.print(Message.UPDATE_OR_DELETE);
+                            try {
+                                action = Validation.validateUpdateDelete(sc.nextLine());
+                                break;
+                            } catch (Exception e) {
+                                System.out.println(e.getMessage());
+                            }
+                        }
+
                         if (action.equals("U")) {
-                            StudentRequestDTO dto = new StudentRequestDTO();
-                            dto.setId(id);
-                            System.out.print(Message.INPUT_NAME);
-                            dto.setName(Validation.getString(sc.nextLine()));
-                            System.out.print(Message.INPUT_SEMESTER);
-                            dto.setSemester(Validation.getString(sc.nextLine()));
-                            CourseType course;
+                            StudentRequestDTO updateDto = new StudentRequestDTO();
+                            updateDto.setId(id);
+
+                            // Nhập Name mới
+                            while (true) {
+                                System.out.print(Message.INPUT_NAME);
+                                try {
+                                    updateDto.setName(Validation.getString(sc.nextLine()));
+                                    break;
+                                } catch (Exception e) {
+                                    System.out.println(e.getMessage());
+                                }
+                            }
+                            // Nhập Semester mới
+                            while (true) {
+                                System.out.print(Message.INPUT_SEMESTER);
+                                try {
+                                    updateDto.setSemester(Validation.getString(sc.nextLine()));
+                                    break;
+                                } catch (Exception e) {
+                                    System.out.println(e.getMessage());
+                                }
+                            }
+                            // Nhập Course mới
                             while (true) {
                                 System.out.print(Message.INPUT_COURSE);
-                                course = Validation.validateCourse(sc.nextLine());
-
-                                if (course != null) {
+                                try {
+                                    updateDto.setCourse(Validation.validateCourse(sc.nextLine()));
                                     break;
+                                } catch (Exception e) {
+                                    System.out.println(e.getMessage());
                                 }
-
-                                System.out.println(Message.INVALID_COURSE);
                             }
-                            dto.setCourse(course);
-                            controller.updateStudent(id, dto);
+                            controller.updateStudent(id, updateDto);
                             System.out.println(Message.UPDATE_SUCCESS);
-                        }
-                        // Neu chon delete
-                        if (action.equals("D")) {
+                        } else {
                             controller.deleteStudent(id);
                             System.out.println(Message.DELETE_SUCCESS);
                         }
                         break;
-                    // ================= REPORT =================
+
                     case 4:
                         controller.report();
                         break;
-                    // ================= EXIT =================
+
                     case 5:
                         return;
                 }
-
             } catch (Exception e) {
-                // Bat loi va in thong bao
                 System.out.println(e.getMessage());
             }
         }
