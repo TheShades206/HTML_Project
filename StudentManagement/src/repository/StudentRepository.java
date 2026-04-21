@@ -19,20 +19,14 @@ public class StudentRepository {
 
     // ================= ADD =================
     // ham nay chi lam nhiem vu them sinh vien, KHONG check trung
-    public boolean addStudent(StudentRequestDTO dto) {
+   // Trách nhiệm 1: CHỈ thêm sinh viên mới vào danh sách
+    public boolean addStudent(Student student) {
+        return studentList.add(student);
+    }
 
-        // tim sinh vien theo id
-        Student student = findById(dto.getId());
-
-        // neu chua ton tai thi tao moi
-        if (student == null) {
-            student = new Student(dto.getId(), dto.getName());
-            studentList.add(student);
-        }
-
-        // them course moi vao danh sach cua sinh vien
-        student.addCourse(new StudentCourse(dto.getSemester(), dto.getCourse()));
-        return true;
+    // 1 việc duy nhất: Nhét môn học vào đúng cái hồ sơ được giao
+    public void addCourseToStudent(Student student, StudentCourse course) {
+        student.addCourse(course);
     }
 
     // ================= UPDATE =================
@@ -64,7 +58,7 @@ public class StudentRepository {
     public void checkDuplicate(Student student, StudentRequestDTO dto) throws Exception {
 
         // neu id trung nhung ten khac -> loi
-        if (!student.getName().equalsIgnoreCase(dto.getName())) {
+        if (!student.getId().equalsIgnoreCase(dto.getId())) {
             throw new Exception(Message.DUPLICATE_ID);
         }
 
