@@ -28,15 +28,27 @@ public class StudentService {
     // tao sinh vien moi
     public boolean createStudent(StudentRequestDTO dto) throws Exception {
 
-        // neu id da ton tai thi phai kiem tra trung du lieu
-        if (repository.findById(dto.getId()) != null) {
-            repository.checkDuplicate(repository.findById(dto.getId()), dto);
+        Student student = repository.findById(dto.getId());
+        
+        if(student == null)
+        {
+            student = new Student(dto.getId(),dto.getName());
+            StudentCourse newCourse = new StudentCourse(dto.getSemester(),dto.getCourse());
+            repository.addStudent(student);
+            addCourseToStudent(student, newCourse);
         }
-
+        else
+        {
+            repository.checkDuplicate(student, dto);
+        }
         // sau khi hop le thi tien hanh them
-        return repository.addStudent(dto);
+        return true;
     }
-
+    
+    public void addCourseToStudent(Student student, StudentCourse course)
+    {
+        repository.addCourseToStudent(student, course);
+    }
     //Cap nhat sinh vien
     public boolean updateStudent(String id, StudentRequestDTO dto) throws Exception {
         return repository.updateStudent(id, dto);
