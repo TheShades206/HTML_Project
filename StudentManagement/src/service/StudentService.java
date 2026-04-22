@@ -32,14 +32,15 @@ public class StudentService {
         
         if(student == null)
         {
-            student = new Student(dto.getId(),dto.getName());
-            StudentCourse newCourse = new StudentCourse(dto.getSemester(),dto.getCourse());
+            student = new Student(dto.getId(),dto.getName());       
+            student.addCourse( new StudentCourse(dto.getSemester(),dto.getCourse()));
             repository.addStudent(student);
-            addCourseToStudent(student, newCourse);
+            
         }
         else
         {
             repository.checkDuplicate(student, dto);
+            addCourseToStudent(student, new StudentCourse(dto.getSemester(),dto.getCourse()));
         }
         // sau khi hop le thi tien hanh them
         return true;
