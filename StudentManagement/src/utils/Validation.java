@@ -23,6 +23,18 @@ public final class Validation {
         return input.trim();
     }
 
+     public static String checkSemester(String input) throws Exception {
+        // Neu null hoac rong thi bao loi
+        if ((input == null) || input.trim().isEmpty()) {
+            throw new Exception(Message.EMPTY_INPUT);
+        }
+        if (!input.trim().matches("\\d+")) {
+            throw new Exception("Semester must contain only numbers!");
+        }
+        // Tra ve chuoi da duoc cat khoang trang
+        return input.trim();
+    }
+    
     // Kiem tra lua chon nam trong khoang min - max
     public static int getChoice(String input, int min, int max) throws Exception {
         try {
