@@ -1,1 +1,1 @@
-# HTML_Project
+# Bài StudentManagement code sẽ hên xui nhé mn, phần repository nhớ tuân theo quy luật SRP, còn phần service phần addStudent thầy sẽ hỏi logic nhiều nhất, nên là có j sửa phần đấy cho hợp logic nhé hẹ hẹ hẹ
